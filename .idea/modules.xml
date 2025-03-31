@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/krusty-skeleton-1.iml" filepath="$PROJECT_DIR$/.idea/krusty-skeleton-1.iml" />
+      <module fileurl="file://$PROJECT_DIR$/krusty-skeleton/sql_scripts/sql_scripts.iml" filepath="$PROJECT_DIR$/krusty-skeleton/sql_scripts/sql_scripts.iml" />
     </modules>
   </component>
 </project>

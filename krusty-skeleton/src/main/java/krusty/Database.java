@@ -10,7 +10,7 @@ import java.util.List;
 import static krusty.Jsonizer.toJson;
 
 public class Database {
-	private static final String jdbcString = "jdbc:mysql://localhost/krusty?serverTimezone=UTC";
+	private static final String jdbcString = "jdbc:mysql://localhost:3306/krusty?serverTimezone=UTC";
 	private static final String jdbcUsername = "root";
 	private static final String jdbcPassword = "uox772ln";
 	private Connection connection;
