@@ -77,9 +77,15 @@ public class Database {
 	}
 
 	public String getPallets(Request req, Response res) {
-		StringBuilder sql = new StringBuilder("SELECT pallet_id AS id, Products.productName AS cookie, Pallets.productionDate, 'null' AS customer, IF(Pallets.isBlocked, 'yes', 'no') AS blocked " +
+		StringBuilder sql = new StringBuilder(
+		"SELECT pallet_id AS id, " +
+				"Products.productName AS cookie, " +
+				"DATE_FORMAT(Pallets.productionDate, '%Y-%m-%d') AS production_date, " +
+				"'null' AS customer, " +
+				"IF(Pallets.isBlocked, 'yes', 'no') AS blocked " +
 				"FROM Pallets " +
 				"LEFT JOIN Products ON Pallets.productName = Products.productName ");
+
 		ArrayList<Object> values = new ArrayList<>();
 		ArrayList<String> conditions = new ArrayList<>();
 
@@ -293,7 +299,7 @@ public class Database {
 						// Update raw materials according to the recipe
 						String updateRawMaterialsQuery = "UPDATE RawIngredients ri " +
 								"JOIN Ingredients i ON ri.ingredients_id = i.ingredients_id " +
-								"SET ri.quantityInStock = ri.quantityInStock - i.quantityInStock " +
+								"SET ri.quantityInStock = ri.quantityInStock - (i.quantityInStock * 54) " +
 								"WHERE i.productName = ?";
 						try (PreparedStatement updateStmt = connection.prepareStatement(updateRawMaterialsQuery)) {
 							updateStmt.setString(1, cookie);
