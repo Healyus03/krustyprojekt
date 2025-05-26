@@ -269,6 +269,9 @@ public class Database {
 		}
 
 		try {
+			// Start transaction
+			connection.setAutoCommit(false);
+
 			// Check if the cookie exists
 			String checkCookieQuery = "SELECT productName FROM Products WHERE productName = ?";
 			try (PreparedStatement checkStmt = connection.prepareStatement(checkCookieQuery)) {
@@ -276,6 +279,7 @@ public class Database {
 				try (ResultSet rs = checkStmt.executeQuery()) {
 					if (!rs.next()) {
 						res.status(400);
+						connection.rollback(); // Rollback transaction
 						return "{\"status\":\"unknown cookie\"}";
 					}
 				}
@@ -288,6 +292,7 @@ public class Database {
 				int rowsAffected = insertStmt.executeUpdate();
 				if (rowsAffected == 0) {
 					res.status(500);
+					connection.rollback(); // Rollback transaction
 					return "{\"status\":\"error\"}";
 				}
 
@@ -305,18 +310,31 @@ public class Database {
 							updateStmt.setString(1, cookie);
 							updateStmt.executeUpdate();
 						}
-
+						// Commit transaction
+						connection.commit();
 						return "{\"status\":\"ok\", \"id\": " + palletId + "}";
 					} else {
 						res.status(500);
+						connection.rollback();
 						return "{\"status\":\"error\"}";
 					}
 				}
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
+			try {
+				connection.rollback(); // Rollback transaction on exception
+			} catch (SQLException rollbackEx) {
+				rollbackEx.printStackTrace();
+			}
 			res.status(500);
 			return "{\"status\":\"error\"}";
+		} finally {
+			try {
+				connection.setAutoCommit(true); // Restore auto-commit mode
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 }
